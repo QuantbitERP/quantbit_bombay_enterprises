@@ -7,7 +7,14 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "rack_warehouse"
+  "warehouse",
+  "column_break_ovrk",
+  "rack_warehouse",
+  "lft",
+  "rgt",
+  "is_group",
+  "old_parent",
+  "parent_rack_warehouse"
  ],
  "fields": [
   {
@@ -15,16 +22,63 @@
    "fieldtype": "Data",
    "label": "Rack Warehouse",
    "unique": 1
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "label": "Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "column_break_ovrk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lft",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Left",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "rgt",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Right",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "is_group",
+   "fieldtype": "Check",
+   "label": "Is Group"
+  },
+  {
+   "fieldname": "old_parent",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Old Parent",
+   "options": "Rack Warehouse"
+  },
+  {
+   "fieldname": "parent_rack_warehouse",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Parent Rack Warehouse",
+   "options": "Rack Warehouse"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
+ "is_tree": 1,
  "links": [],
- "modified": "2026-08-13 11:56:32.647273",
+ "modified": "2026-08-13 13:24:43.022091",
  "modified_by": "Administrator",
  "module": "Quantbit Bombay Enterprises",
  "name": "Rack Warehouse",
  "naming_rule": "By fieldname",
+ "nsm_parent_field": "parent_rack_warehouse",
  "owner": "Administrator",
  "permissions": [
   {
