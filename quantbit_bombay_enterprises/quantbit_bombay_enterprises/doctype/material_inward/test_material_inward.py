@@ -130,8 +130,60 @@ class TestMaterialInward(IntegrationTestCase):
 		frappe.delete_doc("Material Inward", inw_supplier.name, force=1)
 		frappe.db.commit()
 
+	def test_issue_connections_and_actions(self):
+		from quantbit_bombay_enterprises.public.python.issue import (
+			make_quotation,
+			make_material_inward,
+		)
+
+		# 1. Test Dashboard Connections for Issue
+		meta = frappe.get_meta("Issue")
+		dashboard_data = meta.get_dashboard_data()
+
+		all_items = []
+		for group in dashboard_data.get("transactions", []):
+			all_items.extend(group.get("items", []))
+
+		self.assertIn("Task", all_items)
+		self.assertIn("Quotation", all_items)
+		self.assertIn("Material Inward", all_items)
+
+		non_standard = dashboard_data.get("non_standard_fieldnames", {})
+		self.assertEqual(non_standard.get("Quotation"), "custom_issue")
+		self.assertEqual(non_standard.get("Material Inward"), "issue")
+
+		# 2. Create test Issue
+		company = frappe.db.get_value("Company", {}, "name")
+		customer = frappe.db.get_value("Customer", {}, "name")
+		issue = frappe.get_doc({
+			"doctype": "Issue",
+			"subject": "Test Issue Connection",
+			"customer": customer,
+			"company": company
+		}).insert(ignore_permissions=True)
+
+		# 3. Test make_quotation
+		q = make_quotation(issue.name)
+		self.assertEqual(q.doctype, "Quotation")
+		self.assertEqual(q.custom_issue, issue.name)
+		self.assertEqual(q.party_name, customer)
+		self.assertEqual(q.quotation_to, "Customer")
+
+		# 4. Test make_material_inward
+		mi = make_material_inward(issue.name)
+		self.assertEqual(mi.doctype, "Material Inward")
+		self.assertEqual(mi.issue, issue.name)
+		self.assertEqual(mi.party_type, "Customer")
+		self.assertEqual(mi.customer, customer)
+
+		# Cleanup
+		frappe.delete_doc("Issue", issue.name, force=1)
+		frappe.db.commit()
+
 
 def run():
 	t = TestMaterialInward()
 	t.test_material_inward_and_outward_flow()
-	print("Material Inward and Outward tests executed successfully!")
+	t.test_issue_connections_and_actions()
+	print("All tests (including Issue connections and Create actions) executed successfully!")
+

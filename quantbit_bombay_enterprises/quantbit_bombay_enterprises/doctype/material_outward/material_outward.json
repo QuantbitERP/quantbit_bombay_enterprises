@@ -11,6 +11,7 @@
   "posting_date",
   "against_document",
   "party_receipt_no",
+  "sales_invoice",
   "column_break_party",
   "party_type",
   "customer",
@@ -66,6 +67,14 @@
    "in_list_view": 1,
    "label": "Party Receipt No",
    "read_only": 1
+  },
+  {
+   "fieldname": "sales_invoice",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Sales Invoice",
+   "options": "Sales Invoice",
+   "search_index": 1
   },
   {
    "fieldname": "column_break_party",
@@ -150,7 +159,7 @@
   }
  ],
  "links": [],
- "modified": "2026-09-26 13:00:00.000000",
+ "modified": "2026-09-29 13:00:00.000000",
  "modified_by": "Administrator",
  "module": "Quantbit Bombay Enterprises",
  "name": "Material Outward",

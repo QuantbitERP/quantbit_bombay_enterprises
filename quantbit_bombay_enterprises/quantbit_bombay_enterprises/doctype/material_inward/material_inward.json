@@ -10,6 +10,7 @@
   "company",
   "posting_date",
   "party_receipt_no",
+  "issue",
   "column_break_party",
   "party_type",
   "customer",
@@ -55,6 +56,12 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Party Receipt No"
+  },
+  {
+   "fieldname": "issue",
+   "fieldtype": "Link",
+   "label": "Issue",
+   "options": "Issue"
   },
   {
    "fieldname": "column_break_party",
@@ -155,7 +162,7 @@
   }
  ],
  "links": [],
- "modified": "2026-09-26 13:00:00.000000",
+ "modified": "2026-09-29 13:00:00.000000",
  "modified_by": "Administrator",
  "module": "Quantbit Bombay Enterprises",
  "name": "Material Inward",

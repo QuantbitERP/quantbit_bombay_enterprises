@@ -1,0 +1,36 @@
+{
+ "custom_fields": [],
+ "custom_perms": [],
+ "doctype": "Issue",
+ "links": [
+  {
+   "custom": 1,
+   "group": "Activity",
+   "link_doctype": "Task",
+   "link_fieldname": "issue",
+   "parent": "Issue",
+   "parentfield": "links",
+   "parenttype": "DocType"
+  },
+  {
+   "custom": 1,
+   "group": "Transactions",
+   "link_doctype": "Quotation",
+   "link_fieldname": "custom_issue",
+   "parent": "Issue",
+   "parentfield": "links",
+   "parenttype": "DocType"
+  },
+  {
+   "custom": 1,
+   "group": "Transactions",
+   "link_doctype": "Material Inward",
+   "link_fieldname": "issue",
+   "parent": "Issue",
+   "parentfield": "links",
+   "parenttype": "DocType"
+  }
+ ],
+ "property_setters": [],
+ "sync_on_migrate": 1
+}
