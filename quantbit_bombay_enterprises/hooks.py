@@ -261,11 +261,16 @@ override_doctype_dashboards = {
 # ignore_translatable_strings_from = []
 
 fixtures = [
-
     {
-    "dt": "Property Setter",
-    "filters": [
-        ["module", "=", "Quantbit Bombay Enterprises"]
-    ]
+        "dt": "Property Setter",
+        "filters": [
+            ["module", "=", "Quantbit Bombay Enterprises"]
+        ]
+    },
+    {
+        "dt": "Custom Field",
+        "filters": [
+            ["module", "=", "Quantbit Bombay Enterprises"]
+        ]
     },
 ]
