@@ -43,7 +43,10 @@ app_license = "mit"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {
+	"Issue": "public/js/issue.js",
+	"Sales Invoice": "public/js/sales_invoice.js"
+}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -190,9 +193,10 @@ app_license = "mit"
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
 # along with any modifications made in other Frappe apps
-# override_doctype_dashboards = {
-# 	"Task": "quantbit_bombay_enterprises.task.get_dashboard_data"
-# }
+override_doctype_dashboards = {
+	"Issue": "quantbit_bombay_enterprises.public.python.issue.get_dashboard_data",
+	"Sales Invoice": "quantbit_bombay_enterprises.public.python.sales_invoice.get_dashboard_data"
+}
 
 # exempt linked doctypes from being automatically cancelled
 #
@@ -257,11 +261,16 @@ app_license = "mit"
 # ignore_translatable_strings_from = []
 
 fixtures = [
-
     {
-    "dt": "Property Setter",
-    "filters": [
-        ["module", "=", "Quantbit Bombay Enterprises"]
-    ]
+        "dt": "Property Setter",
+        "filters": [
+            ["module", "=", "Quantbit Bombay Enterprises"]
+        ]
+    },
+    {
+        "dt": "Custom Field",
+        "filters": [
+            ["module", "=", "Quantbit Bombay Enterprises"]
+        ]
     },
 ]

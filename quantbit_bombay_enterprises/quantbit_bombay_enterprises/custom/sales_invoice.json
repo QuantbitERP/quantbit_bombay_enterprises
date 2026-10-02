@@ -1,0 +1,18 @@
+{
+ "custom_fields": [],
+ "custom_perms": [],
+ "doctype": "Sales Invoice",
+ "links": [
+  {
+   "custom": 1,
+   "group": "Reference",
+   "link_doctype": "Material Outward",
+   "link_fieldname": "sales_invoice",
+   "parent": "Sales Invoice",
+   "parentfield": "links",
+   "parenttype": "DocType"
+  }
+ ],
+ "property_setters": [],
+ "sync_on_migrate": 1
+}
