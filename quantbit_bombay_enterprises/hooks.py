@@ -273,4 +273,10 @@ fixtures = [
             ["module", "=", "Quantbit Bombay Enterprises"]
         ]
     },
+    {
+        "dt": "Client Script",
+        "filters": [
+            ["module", "=", "Quantbit Bombay Enterprises"]
+        ]
+    },
 ]
