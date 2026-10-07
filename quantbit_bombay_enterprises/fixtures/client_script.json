@@ -1,0 +1,13 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Sales Order",
+  "enabled": 1,
+  "modified": "2026-10-07 15:31:30.908849",
+  "module": "Quantbit Bombay Enterprises",
+  "name": "Set Warehouse Filter",
+  "script": "frappe.ui.form.on(\"Sales Order\", {\n    company(frm) {\n        // Clear existing warehouse if company changes\n        frm.set_value(\"set_warehouse\", null);\n\n        set_warehouse_filter(frm);\n    },\n\n    setup(frm) {\n        set_warehouse_filter(frm);\n    }\n});\n\nfunction set_warehouse_filter(frm) {\n    frm.set_query(\"set_warehouse\", function() {\n        return {\n            filters: {\n                company: frm.doc.company\n            }\n        };\n    });\n}",
+  "view": "Form"
+ }
+]
