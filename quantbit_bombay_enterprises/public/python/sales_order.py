@@ -1,75 +1,48 @@
-
 import frappe
-from frappe.utils import flt, getdate
+from frappe.desk.query_report import run
+from frappe.utils import flt
 
 
 @frappe.whitelist()
-def get_warehouse_stock_on_date(item_code, posting_date=None, company=None):
-    if not item_code:
+def get_warehouse_stock_on_date(item_code, posting_date, company):
+    if not item_code or not posting_date or not company:
         return []
 
-    if not posting_date:
-        posting_date = frappe.utils.today()
-
-    target_date = getdate(posting_date)
-
-    if not company:
-        company = (
-            frappe.defaults.get_user_default("Company")
-            or frappe.db.get_single_value("Global Defaults", "default_company")
-        )
-
-    if not company:
-        frappe.throw("Please select a Company.")
-
-    # Stock movement on the selected date only.
-    # Positive actual_qty means stock inward.
-    stock_data = frappe.db.sql(
-        """
-        SELECT
-            sle.warehouse,
-            SUM(sle.actual_qty) AS stock_added
-        FROM `tabStock Ledger Entry` sle
-        INNER JOIN `tabWarehouse` w
-            ON w.name = sle.warehouse
-        WHERE
-            sle.company = %(company)s
-            AND sle.item_code = %(item_code)s
-            AND sle.posting_date = %(target_date)s
-            AND sle.actual_qty > 0
-            AND sle.is_cancelled = 0
-            AND w.company = %(company)s
-        GROUP BY sle.warehouse
-        HAVING SUM(sle.actual_qty) > 0
-        ORDER BY sle.warehouse
-        """,
-        {
-            "company": company,
-            "item_code": item_code,
-            "target_date": target_date,
-        },
-        as_dict=True,
-    )
-
-    # Current projected quantity from Bin
-    bins = frappe.get_all(
-        "Bin",
-        filters={"item_code": item_code},
-        fields=["warehouse", "projected_qty"],
-    )
-
-    projected_map = {
-        row.warehouse: flt(row.projected_qty)
-        for row in bins
+    filters = {
+        "company": company,
+        "item_code": [item_code],
+        "from_date": posting_date,
+        "to_date": posting_date,
     }
 
-    results = []
+    report_result = run(
+        "Stock Balance",
+        filters=filters,
+        ignore_prepared_report=True,
+    )
 
-    for row in stock_data:
-        results.append({
-            "warehouse": row.warehouse,
-            "stock_added": flt(row.stock_added),
-            "projected_qty": projected_map.get(row.warehouse, 0.0),
-        })
+    result = report_result.get("result") or []
+    warehouses = []
 
-    return results
+    for row in result:
+        if not isinstance(row, dict):
+            continue
+
+        if row.get("item_code") != item_code:
+            continue
+
+        warehouse = row.get("warehouse")
+        if not warehouse:
+            continue
+
+        available_qty = flt(
+            row.get("bal_qty", row.get("balance_qty", 0))
+        )
+
+        if available_qty > 0:
+            warehouses.append({
+                "warehouse": warehouse,
+                "available_qty": available_qty,
+            })
+
+    return warehouses
