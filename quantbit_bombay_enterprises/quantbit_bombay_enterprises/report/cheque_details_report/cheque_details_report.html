@@ -1,0 +1,243 @@
+<style>
+	@page {
+		size: A4 portrait;
+		margin: 5mm;
+	}
+
+	.slip {
+		height: 141mm;               /* 2 x 141mm = 282mm, fits inside 297mm - 10mm margin */
+		padding: 4mm 6mm 2mm 6mm;
+		font-family: Arial, Helvetica, sans-serif;
+		font-size: 12px;
+		color: #000;
+		box-sizing: border-box;
+		page-break-inside: avoid;
+		overflow: hidden;
+	}
+
+	.slip + .slip {
+		border-top: 1px dashed #000;
+		padding-top: 6mm;
+	}
+
+	.slip .copy {
+		text-align: center;
+		font-style: italic;
+		font-size: 12px;
+		margin: 0;
+	}
+
+	.slip .title {
+		text-align: center;
+		font-weight: bold;
+		font-size: 14px;
+		margin: 0 0 4mm 0;
+	}
+
+	/* header block: bank details (left) + date / PAN / phone (right) */
+	.slip table.hdr {
+		width: 100%;
+		border: 0;
+		border-collapse: collapse;
+		table-layout: fixed;
+	}
+
+	.slip table.hdr td {
+		border: 0;
+		padding: 1px 3px;
+		vertical-align: top;
+		font-size: 12px;
+		overflow-wrap: anywhere;
+	}
+
+	.slip table.hdr td.lbl-l { width: 17%; }
+	.slip table.hdr td.val-l { width: 33%; }
+	.slip table.hdr td.lbl-r { width: 25%; }
+	.slip table.hdr td.val-r { width: 25%; }
+
+	/* cheque grid */
+	.slip table.grid {
+		width: 100%;
+		border-collapse: collapse;
+		margin-top: 4mm;
+		table-layout: fixed;
+		font-size: 11px;
+	}
+
+	.slip table.grid th,
+	.slip table.grid td {
+		border: 1px solid #000;
+		padding: 3px 4px;
+		vertical-align: middle;
+		overflow-wrap: anywhere;
+	}
+
+	.slip table.grid th {
+		background: #d9d9d9 !important;
+		text-align: left;
+		font-weight: bold;
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+	}
+
+	.slip .r { text-align: right; }
+
+	.slip .words {
+		margin: 4mm 0 0 0;
+		font-size: 12px;
+	}
+
+	.slip table.sign {
+		width: 100%;
+		border-collapse: collapse;
+		margin-top: 12mm;
+		table-layout: fixed;
+	}
+
+	.slip table.sign td {
+		border: 0;
+		padding: 1px 3px;
+		font-size: 12px;
+		vertical-align: top;
+	}
+
+	.slip table.sign td.sign-line {
+		padding-top: 10mm;
+	}
+
+	@media print {
+		html, body {
+			margin: 0 !important;
+			padding: 0 !important;
+			width: 100%;
+		}
+
+		.print-format {
+			margin: 0 !important;
+			padding: 0 !important;
+			width: 100% !important;
+			max-width: none !important;
+		}
+
+		.slip {
+			break-inside: avoid;
+			page-break-inside: avoid;
+		}
+
+		.slip + .slip {
+			break-before: avoid;
+			page-break-before: avoid;
+		}
+	}
+</style>
+
+{% var rows = (data || []).filter(function(r) {
+	return r.payment_entry;
+}); %}
+
+{% if (rows.length) { %}
+
+	{% var h = rows[0]; %}
+	{% var total = 0; %}
+
+	{% rows.forEach(function(r) {
+		total += flt(r.paid_amount);
+	}); %}
+
+	{% var copies = ["Banker's Copy", "Customer's Copy"]; %}
+
+	{% for (var c = 0; c < copies.length; c++) { %}
+
+	<div class="slip">
+
+		<p class="copy">({%= copies[c] %})</p>
+		<p class="title">Cheque Deposit Slip/Pay-in-Slip</p>
+
+		<table class="hdr">
+			<tr>
+				<td class="lbl-l">Bank name</td>
+				<td class="val-l">: <b>{%= h.co_bank_name || "" %}</b></td>
+				<td class="lbl-r">Date</td>
+				<td class="val-r">: {%= filters.from_date ? frappe.datetime.str_to_user(filters.from_date) : "" %}</td>
+			</tr>
+			<tr>
+				<td class="lbl-l">Branch name</td>
+				<td class="val-l">: <b>{%= h.co_branch_name || "" %}</b></td>
+				<td class="lbl-r">Company PAN</td>
+				<td class="val-r">: {%= h.co_pan || "" %}</td>
+			</tr>
+			<tr>
+				<td class="lbl-l">Account no.</td>
+				<td class="val-l">: <b>{%= h.co_account_no || "" %}</b></td>
+				<td class="lbl-r">Company's telephone no.</td>
+				<td class="val-r">: {%= h.co_phone || "" %}</td>
+			</tr>
+			<tr>
+				<td class="lbl-l">Account holder name</td>
+				<td class="val-l">: <b>{%= h.co_account_holder || "" %}</b></td>
+				<td class="lbl-r">Company's mobile no.</td>
+				<td class="val-r">:</td>
+			</tr>
+		</table>
+
+		<table class="grid">
+			<thead>
+				<tr>
+					<th style="width:6%;">Sl.No.</th>
+					<th style="width:25%;">Received From</th>
+					<th style="width:11%;">Cheque /DD No.</th>
+					<th style="width:11%;">Cheque /DD Date</th>
+					<th style="width:19%;">Bank Name</th>
+					<th style="width:13%;">Branch</th>
+					<th style="width:15%;" class="r">Amount</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				{% for (var i = 0; i < rows.length; i++) { %}
+				<tr>
+					<td>{%= rows[i].sr_no || (i + 1) %}</td>
+					<td>{%= rows[i].party_name || "" %}</td>
+					<td>{%= rows[i].reference_no || "" %}</td>
+					<td>
+						{%= rows[i].reference_date
+							? frappe.datetime.str_to_user(rows[i].reference_date)
+							: "" %}
+					</td>
+					<td>{%= rows[i].bank_name || "" %}</td>
+					<td>{%= rows[i].bank_branch || "" %}</td>
+					<td class="r">{%= format_currency(rows[i].paid_amount) %}</td>
+				</tr>
+				{% } %}
+
+				<tr>
+					<td colspan="6" class="r"><b>Total</b></td>
+					<td class="r"><b>{%= format_currency(total) %}</b></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<p class="words">
+			Amount (in words) : <b>{%= h.amount_in_words || "" %}</b>
+		</p>
+
+		<table class="sign">
+			<tr>
+				<td style="width:50%;">Deposited by</td>
+				<td style="width:50%;" class="r">Received by</td>
+			</tr>
+			<tr>
+				<td class="sign-line">Signature</td>
+				<td class="sign-line r">Signature</td>
+			</tr>
+		</table>
+
+	</div>
+
+	{% } %}
+
+{% } else { %}
+
+	<p>No cheques found for the selected filters.</p>
+
+{% } %}
