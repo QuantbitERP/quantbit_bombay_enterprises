@@ -1,0 +1,244 @@
+
+<style>
+	@page {
+		size: A4 portrait;
+		margin: 5mm;
+	}
+
+	.slip {
+		height: 140mm;
+		padding: 6px 10px;
+		font-size: 11px;
+		box-sizing: border-box;
+		page-break-inside: avoid;
+		overflow: hidden;
+	}
+
+	.slip + .slip {
+		border-top: 1px dashed #000;
+		margin-top: 0;
+		padding-top: 12px;
+	}
+
+	.slip .title {
+		text-align: center;
+		font-style: italic;
+		margin: 0;
+	}
+
+	.slip .title b {
+		font-size: 13px;
+		font-style: normal;
+		text-decoration: underline;
+	}
+
+	.slip table.hdr {
+		width: 100%;
+		border: 0;
+		margin-top: 4px;
+		table-layout: fixed;
+	}
+
+	.slip table.hdr td {
+		border: 0;
+		padding: 1px 3px;
+		vertical-align: top;
+		overflow-wrap: anywhere;
+	}
+
+	.slip table.grid {
+		width: 100%;
+		border-collapse: collapse;
+		margin-top: 6px;
+		table-layout: fixed;
+		font-size: 9px;
+	}
+
+	.slip table.grid th,
+	.slip table.grid td {
+		border: 1px solid #000;
+		padding: 3px 4px;
+		vertical-align: middle;
+		overflow-wrap: anywhere;
+	}
+
+	.slip table.grid th {
+		background: #ddd !important;
+		text-align: left;
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+	}
+
+	.slip .r {
+		text-align: right;
+	}
+
+	.slip .logo {
+		width: 90px;
+		height: 50px;
+		border: 1px solid #000;
+		text-align: center;
+		line-height: 50px;
+	}
+
+	.slip .sign {
+		margin-top: 28px;
+	}
+
+	@media print {
+		html,
+		body {
+			margin: 0 !important;
+			padding: 0 !important;
+			width: 100%;
+		}
+
+		.print-format {
+			margin: 0 !important;
+			padding: 0 !important;
+			width: 100% !important;
+			max-width: none !important;
+		}
+
+		.slip {
+			break-inside: avoid;
+			page-break-inside: avoid;
+		}
+
+		.slip + .slip {
+			break-before: avoid;
+			page-break-before: avoid;
+		}
+	}
+</style>
+
+{% var rows = (data || []).filter(function(r) {
+	return r.payment_entry;
+}); %}
+
+{% if (rows.length) { %}
+
+	{% var h = rows[0]; %}
+	{% var total = 0; %}
+
+	{% rows.forEach(function(r) {
+		total += flt(r.paid_amount);
+	}); %}
+
+	{% var copies = ["Banker's Copy", "Customer's Copy"]; %}
+
+	{% for (var c = 0; c < copies.length; c++) { %}
+
+	<div class="slip">
+
+		<div class="title">
+			({%= copies[c] %})<br>
+			<b>Cheque Deposit Slip / Pay-in-Slip</b>
+		</div>
+
+		<table class="hdr">
+			<tr>
+				<td rowspan="4" style="width:100px;">
+					<div class="logo">Bank Logo</div>
+				</td>
+
+				<td style="width:110px;">Bank name</td>
+				<td>: <b>{%= h.co_bank_name || "" %}</b></td>
+
+				<td style="width:150px;">Date</td>
+				<td>: {%= h.slip_date || "" %}</td>
+			</tr>
+
+			<tr>
+				<td>Branch name</td>
+				<td>: <b>{%= h.co_branch_name || "" %}</b></td>
+
+				<td>Company PAN</td>
+				<td>: {%= h.co_pan || "" %}</td>
+			</tr>
+
+			<tr>
+				<td>Account no.</td>
+				<td>: <b>{%= h.co_account_no || "" %}</b></td>
+
+				<td>Company's telephone no.</td>
+				<td>: {%= h.co_phone || "" %}</td>
+			</tr>
+
+			<tr>
+				<td>Account holder name</td>
+				<td>: <b>{%= h.co_account_holder || "" %}</b></td>
+
+				<td>Company's mobile no.</td>
+				<td>:</td>
+			</tr>
+		</table>
+
+		<table class="grid">
+			<thead>
+				<tr>
+					<th style="width:35px;">Sr No.</th>
+					<th>Received From</th>
+					<th>Cheque No</th>
+					<th>Cheque Date</th>
+					<th>Bank Name</th>
+					<th>Bank Branch</th>
+					<th class="r">Amount</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				{% for (var i = 0; i < rows.length; i++) { %}
+				<tr>
+					<td>{%= rows[i].sr_no || (i + 1) %}</td>
+					<td>{%= rows[i].party_name || "" %}</td>
+					<td>{%= rows[i].reference_no || "" %}</td>
+
+					<td>
+						{%= rows[i].reference_date
+							? frappe.datetime.str_to_user(rows[i].reference_date)
+							: "" %}
+					</td>
+
+					<td>{%= rows[i].bank_name || "" %}</td>
+					<td>{%= rows[i].bank_branch || "" %}</td>
+
+					<td class="r">
+						{%= format_currency(rows[i].paid_amount) %}
+					</td>
+				</tr>
+				{% } %}
+
+				<tr>
+					<td colspan="6" class="r">
+						<b>Total</b>
+					</td>
+
+					<td class="r">
+						<b>{%= format_currency(total) %}</b>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<p style="margin-top:6px;">
+			Amount (in words) :
+			<b>{%= h.amount_in_words || "" %}</b>
+		</p>
+
+		<table class="hdr sign">
+			<tr>
+				<td>Deposited by / Received by</td>
+				<td class="r">Signature</td>
+			</tr>
+		</table>
+
+	</div>
+
+	{% } %}
+
+{% } else { %}
+
+	<p>No cheques found for the selected filters.</p>
+
+{% } %}
