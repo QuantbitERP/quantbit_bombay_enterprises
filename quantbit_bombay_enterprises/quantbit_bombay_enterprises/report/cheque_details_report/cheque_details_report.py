@@ -30,13 +30,13 @@ def get_columns():
 		{"label": _("Bank Name"), "fieldname": "bank_name", "fieldtype": "Data", "width": 200},
 		{"label": _("Bank Branch"), "fieldname": "bank_branch", "fieldtype": "Data", "width": 160},
 		{"label": _("Amount"), "fieldname": "paid_amount", "fieldtype": "Currency", "width": 130},
-		{
-			"label": _("Payment Entry"),
-			"fieldname": "payment_entry",
-			"fieldtype": "Link",
-			"options": "Payment Entry",
-			"width": 160,
-		},
+		# {
+		# 	"label": _("Payment Entry"),
+		# 	"fieldname": "payment_entry",
+		# 	"fieldtype": "Link",
+		# 	"options": "Payment Entry",
+		# 	"width": 160,
+		# },
 	]
 
 
@@ -55,7 +55,7 @@ def get_data(filters):
 			pe.party_name,
 			pe.reference_no,
 			pe.reference_date,
-			ba.bank AS bank_name,
+			pe.party_bank_account AS bank_name,
 			ba.custom_branch_name AS bank_branch,
 			pe.paid_amount
 		FROM `tabPayment Entry` pe
