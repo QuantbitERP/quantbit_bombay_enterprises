@@ -1,243 +1,352 @@
+```html
 <style>
-	@page {
-		size: A4 portrait;
-		margin: 5mm;
-	}
+    @page {
+        size: A4 portrait;
+        margin: 5mm;
+    }
 
-	.slip {
-		height: 141mm;               /* 2 x 141mm = 282mm, fits inside 297mm - 10mm margin */
-		padding: 4mm 6mm 2mm 6mm;
-		font-family: Arial, Helvetica, sans-serif;
-		font-size: 12px;
-		color: #000;
-		box-sizing: border-box;
-		page-break-inside: avoid;
-		overflow: hidden;
-	}
+    * {
+        box-sizing: border-box;
+    }
 
-	.slip + .slip {
-		border-top: 1px dashed #000;
-		padding-top: 6mm;
-	}
+    html,
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100%;
+        color: #000;
+        font-family: Arial, Helvetica, sans-serif;
+    }
 
-	.slip .copy {
-		text-align: center;
-		font-style: italic;
-		font-size: 12px;
-		margin: 0;
-	}
+    .print-format {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
 
-	.slip .title {
-		text-align: center;
-		font-weight: bold;
-		font-size: 14px;
-		margin: 0 0 4mm 0;
-	}
+    .slip {
+        width: 100%;
+        height: 141mm;
+        padding: 3mm 5mm 2mm;
+        font-size: 11px;
+        line-height: 1.15;
+        overflow: hidden;
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
 
-	/* header block: bank details (left) + date / PAN / phone (right) */
-	.slip table.hdr {
-		width: 100%;
-		border: 0;
-		border-collapse: collapse;
-		table-layout: fixed;
-	}
+    .slip + .slip {
+        border-top: 1px dashed #000;
+        padding-top: 3mm;
+    }
 
-	.slip table.hdr td {
-		border: 0;
-		padding: 1px 3px;
-		vertical-align: top;
-		font-size: 12px;
-		overflow-wrap: anywhere;
-	}
+    .slip .copy {
+        text-align: center;
+        font-size: 11px;
+        font-style: italic;
+        margin: 0 0 1mm;
+        line-height: 1.1;
+    }
 
-	.slip table.hdr td.lbl-l { width: 17%; }
-	.slip table.hdr td.val-l { width: 33%; }
-	.slip table.hdr td.lbl-r { width: 25%; }
-	.slip table.hdr td.val-r { width: 25%; }
+    .slip .title {
+        text-align: center;
+        font-size: 13px;
+        font-weight: bold;
+        margin: 0 0 2mm;
+        line-height: 1.2;
+    }
 
-	/* cheque grid */
-	.slip table.grid {
-		width: 100%;
-		border-collapse: collapse;
-		margin-top: 4mm;
-		table-layout: fixed;
-		font-size: 11px;
-	}
+    /* Bank details: compact spacing */
+    .slip table.hdr {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        margin: 0;
+    }
 
-	.slip table.grid th,
-	.slip table.grid td {
-		border: 1px solid #000;
-		padding: 3px 4px;
-		vertical-align: middle;
-		overflow-wrap: anywhere;
-	}
+    .slip table.hdr td {
+        border: none !important;
+        padding: 1px 2px;
+        vertical-align: middle;
+        font-size: 10.5px;
+        line-height: 1.15;
+        overflow-wrap: anywhere;
+        word-break: normal;
+    }
 
-	.slip table.grid th {
-		background: #d9d9d9 !important;
-		text-align: left;
-		font-weight: bold;
-		-webkit-print-color-adjust: exact;
-		print-color-adjust: exact;
-	}
+    .slip table.hdr td.lbl-l {
+        width: 17%;
+    }
 
-	.slip .r { text-align: right; }
+    .slip table.hdr td.val-l {
+        width: 33%;
+    }
 
-	.slip .words {
-		margin: 4mm 0 0 0;
-		font-size: 12px;
-	}
+    .slip table.hdr td.lbl-r {
+        width: 25%;
+    }
 
-	.slip table.sign {
-		width: 100%;
-		border-collapse: collapse;
-		margin-top: 12mm;
-		table-layout: fixed;
-	}
+    .slip table.hdr td.val-r {
+        width: 25%;
+    }
 
-	.slip table.sign td {
-		border: 0;
-		padding: 1px 3px;
-		font-size: 12px;
-		vertical-align: top;
-	}
+    /* Cheque details table */
+    .slip table.grid {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        margin-top: 2.5mm;
+        font-size: 9.5px;
+    }
 
-	.slip table.sign td.sign-line {
-		padding-top: 10mm;
-	}
+    .slip table.grid th,
+    .slip table.grid td {
+        border: 1px solid #000;
+        padding: 3px 3px;
+        vertical-align: middle;
+        line-height: 1.15;
+        overflow-wrap: anywhere;
+    }
 
-	@media print {
-		html, body {
-			margin: 0 !important;
-			padding: 0 !important;
-			width: 100%;
-		}
+    .slip table.grid th {
+        background: #d9d9d9 !important;
+        text-align: left;
+        font-weight: bold;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
 
-		.print-format {
-			margin: 0 !important;
-			padding: 0 !important;
-			width: 100% !important;
-			max-width: none !important;
-		}
+    .slip table.grid th.r,
+    .slip table.grid td.r {
+        text-align: right;
+    }
 
-		.slip {
-			break-inside: avoid;
-			page-break-inside: avoid;
-		}
+    .slip .words {
+        margin: 2.5mm 0 0;
+        font-size: 10.5px;
+        line-height: 1.2;
+        overflow-wrap: anywhere;
+    }
 
-		.slip + .slip {
-			break-before: avoid;
-			page-break-before: avoid;
-		}
-	}
+    .slip table.sign {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        margin-top: 8mm;
+    }
+
+    .slip table.sign td {
+        border: none !important;
+        padding: 1px 2px;
+        font-size: 10.5px;
+        vertical-align: top;
+    }
+
+    .slip table.sign td.sign-line {
+        padding-top: 7mm;
+    }
+
+    .slip table.sign td.r {
+        text-align: right;
+    }
+
+    /* Print-specific layout */
+    @media print {
+        html,
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+
+        .print-format {
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .slip {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .slip + .slip {
+            break-before: avoid;
+            page-break-before: avoid;
+        }
+    }
+
+    /* Landscape: compact two-copy layout */
+    @media print and (orientation: landscape) {
+        @page {
+            size: A4 landscape;
+            margin: 4mm;
+        }
+
+        .slip {
+            height: 99mm;
+            padding: 2mm 4mm;
+            font-size: 9px;
+        }
+
+        .slip + .slip {
+            padding-top: 2mm;
+        }
+
+        .slip .copy {
+            font-size: 9px;
+            margin-bottom: 0.5mm;
+        }
+
+        .slip .title {
+            font-size: 11px;
+            margin-bottom: 1mm;
+        }
+
+        .slip table.hdr td {
+            font-size: 9px;
+            padding: 0.5px 2px;
+        }
+
+        .slip table.grid {
+            font-size: 8px;
+            margin-top: 1.5mm;
+        }
+
+        .slip table.grid th,
+        .slip table.grid td {
+            padding: 2px;
+        }
+
+        .slip .words {
+            font-size: 9px;
+            margin-top: 1.5mm;
+        }
+
+        .slip table.sign {
+            margin-top: 3mm;
+        }
+
+        .slip table.sign td {
+            font-size: 9px;
+        }
+
+        .slip table.sign td.sign-line {
+            padding-top: 3mm;
+        }
+    }
 </style>
 
 {% var rows = (data || []).filter(function(r) {
-	return r.payment_entry;
+    return r.payment_entry;
 }); %}
 
 {% if (rows.length) { %}
 
-	{% var h = rows[0]; %}
-	{% var total = 0; %}
+    {% var h = rows[0]; %}
+    {% var total = 0; %}
 
-	{% rows.forEach(function(r) {
-		total += flt(r.paid_amount);
-	}); %}
+    {% rows.forEach(function(r) {
+        total += flt(r.paid_amount);
+    }); %}
 
-	{% var copies = ["Banker's Copy", "Customer's Copy"]; %}
+    {% var copies = ["Banker's Copy", "Customer's Copy"]; %}
 
-	{% for (var c = 0; c < copies.length; c++) { %}
+    {% for (var c = 0; c < copies.length; c++) { %}
 
-	<div class="slip">
+    <div class="slip">
 
-		<p class="copy">({%= copies[c] %})</p>
-		<p class="title">Cheque Deposit Slip/Pay-in-Slip</p>
+        <p class="copy">({%= copies[c] %})</p>
+        <p class="title">Cheque Deposit Slip/Pay-in-Slip</p>
 
-		<table class="hdr">
-			<tr>
-				<td class="lbl-l">Bank name</td>
-				<td class="val-l">: <b>{%= h.co_bank_name || "" %}</b></td>
-				<td class="lbl-r">Date</td>
-				<td class="val-r">: {%= filters.from_date ? frappe.datetime.str_to_user(filters.from_date) : "" %}</td>
-			</tr>
-			<tr>
-				<td class="lbl-l">Branch name</td>
-				<td class="val-l">: <b>{%= h.co_branch_name || "" %}</b></td>
-				<td class="lbl-r">Company PAN</td>
-				<td class="val-r">: {%= h.co_pan || "" %}</td>
-			</tr>
-			<tr>
-				<td class="lbl-l">Account no.</td>
-				<td class="val-l">: <b>{%= h.co_account_no || "" %}</b></td>
-				<td class="lbl-r">Company's telephone no.</td>
-				<td class="val-r">: {%= h.co_phone || "" %}</td>
-			</tr>
-			<tr>
-				<td class="lbl-l">Account holder name</td>
-				<td class="val-l">: <b>{%= h.co_account_holder || "" %}</b></td>
-				<td class="lbl-r">Company's mobile no.</td>
-				<td class="val-r">:</td>
-			</tr>
-		</table>
+        <table class="hdr">
+            <tr>
+                <td class="lbl-l">Bank name</td>
+                <td class="val-l">: <b>{%= h.co_bank_name || "" %}</b></td>
+                <td class="lbl-r">Date</td>
+                <td class="val-r">: {%= filters.from_date ? frappe.datetime.str_to_user(filters.from_date) : "" %}</td>
+            </tr>
+            <tr>
+                <td class="lbl-l">Branch name</td>
+                <td class="val-l">: <b>{%= h.co_branch_name || "" %}</b></td>
+                <td class="lbl-r">Company PAN</td>
+                <td class="val-r">: {%= h.co_pan || "" %}</td>
+            </tr>
+            <tr>
+                <td class="lbl-l">Account no.</td>
+                <td class="val-l">: <b>{%= h.co_account_no || "" %}</b></td>
+                <td class="lbl-r">Company's telephone no.</td>
+                <td class="val-r">: {%= h.co_phone || "" %}</td>
+            </tr>
+            <tr>
+                <td class="lbl-l">Account holder name</td>
+                <td class="val-l">: <b>{%= h.co_account_holder || "" %}</b></td>
+                <td class="lbl-r">Company's mobile no.</td>
+                <td class="val-r">:</td>
+            </tr>
+        </table>
 
-		<table class="grid">
-			<thead>
-				<tr>
-					<th style="width:6%;">Sl.No.</th>
-					<th style="width:25%;">Received From</th>
-					<th style="width:11%;">Cheque /DD No.</th>
-					<th style="width:11%;">Cheque /DD Date</th>
-					<th style="width:19%;">Bank Name</th>
-					<th style="width:13%;">Branch</th>
-					<th style="width:15%;" class="r">Amount</th>
-				</tr>
-			</thead>
+        <table class="grid">
+            <thead>
+                <tr>
+                    <th style="width:6%;">Sl.No.</th>
+                    <th style="width:25%;">Received From</th>
+                    <th style="width:11%;">Cheque /DD No.</th>
+                    <th style="width:11%;">Cheque /DD Date</th>
+                    <th style="width:19%;">Bank Name</th>
+                    <th style="width:13%;">Branch</th>
+                    <th style="width:15%;" class="r">Amount</th>
+                </tr>
+            </thead>
 
-			<tbody>
-				{% for (var i = 0; i < rows.length; i++) { %}
-				<tr>
-					<td>{%= rows[i].sr_no || (i + 1) %}</td>
-					<td>{%= rows[i].party_name || "" %}</td>
-					<td>{%= rows[i].reference_no || "" %}</td>
-					<td>
-						{%= rows[i].reference_date
-							? frappe.datetime.str_to_user(rows[i].reference_date)
-							: "" %}
-					</td>
-					<td>{%= rows[i].bank_name || "" %}</td>
-					<td>{%= rows[i].bank_branch || "" %}</td>
-					<td class="r">{%= format_currency(rows[i].paid_amount) %}</td>
-				</tr>
-				{% } %}
+            <tbody>
+                {% for (var i = 0; i < rows.length; i++) { %}
+                <tr>
+                    <td>{%= rows[i].sr_no || (i + 1) %}</td>
+                    <td>{%= rows[i].party_name || "" %}</td>
+                    <td>{%= rows[i].reference_no || "" %}</td>
+                    <td>
+                        {%= rows[i].reference_date
+                            ? frappe.datetime.str_to_user(rows[i].reference_date)
+                            : "" %}
+                    </td>
+                    <td>{%= rows[i].bank_name || "" %}</td>
+                    <td>{%= rows[i].bank_branch || "" %}</td>
+                    <td class="r">{%= format_currency(rows[i].paid_amount) %}</td>
+                </tr>
+                {% } %}
 
-				<tr>
-					<td colspan="6" class="r"><b>Total</b></td>
-					<td class="r"><b>{%= format_currency(total) %}</b></td>
-				</tr>
-			</tbody>
-		</table>
+                <tr>
+                    <td colspan="6" class="r"><b>Total</b></td>
+                    <td class="r"><b>{%= format_currency(total) %}</b></td>
+                </tr>
+            </tbody>
+        </table>
 
-		<p class="words">
-			Amount (in words) : <b>{%= h.amount_in_words || "" %}</b>
-		</p>
+        <p class="words">
+            Amount (in words): <b>{%= h.amount_in_words || "" %}</b>
+        </p>
 
-		<table class="sign">
-			<tr>
-				<td style="width:50%;">Deposited by</td>
-				<td style="width:50%;" class="r">Received by</td>
-			</tr>
-			<tr>
-				<td class="sign-line">Signature</td>
-				<td class="sign-line r">Signature</td>
-			</tr>
-		</table>
+        <table class="sign">
+            <tr>
+                <td style="width:50%;">Deposited by</td>
+                <td style="width:50%;" class="r">Received by</td>
+            </tr>
+            <tr>
+                <td class="sign-line">Signature</td>
+                <td class="sign-line r">Signature</td>
+            </tr>
+        </table>
 
-	</div>
+    </div>
 
-	{% } %}
+    {% } %}
 
 {% } else { %}
 
-	<p>No cheques found for the selected filters.</p>
+    <p>No cheques found for the selected filters.</p>
 
 {% } %}
+```
