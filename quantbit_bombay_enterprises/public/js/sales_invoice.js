@@ -28,7 +28,7 @@ frappe.ui.form.on("Sales Invoice", {
 		'vehicle_no', 'custom_vehicle__no',
 		'distance', 'custom_distance_in_km',
 		'mode_of_transport', 'gst_vehicle_type',
-		'custom_no_of_packages'
+		'custom_no_of_packages','custom_remark'
 		]).then(({ message: dn }) => {
 		if (!dn) return;
 		const vals = {
@@ -43,7 +43,8 @@ frappe.ui.form.on("Sales Invoice", {
 			distance: dn.distance || dn.custom_distance_in_km,
 			mode_of_transport: dn.mode_of_transport,
 			gst_vehicle_type: dn.gst_vehicle_type,
-			custom_no_of_packages: dn.custom_no_of_packages
+			custom_no_of_packages: dn.custom_no_of_packages,
+			remark : den.custom_remark
 		};
 		Object.keys(vals).forEach(k => { if (!vals[k]) delete vals[k]; });
 		frm.set_value(vals);
