@@ -9,7 +9,35 @@ frappe.ui.form.on("Sales Order", {
 
     company(frm) {
         refresh_open_row_preview(frm);
-    }
+    },
+    onload(frm) {
+        if (!frm.is_new()) return;
+        const row = (frm.doc.items || []).find(r => r.prevdoc_docname);
+        if (!row || frm.doc.custom_transporter) return;
+
+        frappe.db.get_value('Quotation', row.prevdoc_docname, [
+        'custom_transporter_', 'custom_gst_transporter_id', 'custom_transporter_name',
+        'custom_driver', 'custom_driver_name', 'custom_transport_receipt_no',
+        'custom_vehicle_no', 'custom_distance_in_km', 'custom_no_of_packaging',
+        'custom_mode_of_transport', 'custom_gst_vehicle_type'
+        ]).then(({ message: q }) => {
+        if (!q) return;
+        frm.set_value({
+            custom_transporter: q.custom_transporter_,
+            custom_gst_transporter_id: q.custom_gst_taransporters_id,
+            custom_transporter_name: q.custom_transporter_name,
+            custom_driver: q.custom_driver,
+            custom_driver_name: q.custom_driver_name,
+            custom_transport_receipt_no: q.custom_transport_receipt_no,
+            custom_vehicle_no: q.custom_vehicle_no,
+            custom_distance_in_km: q.custom_distance_in_km,
+            custom_no_of_packages: q.custom_no_of_packaging,
+            custom_mode__of_transport: q.custom_mode_of_transport,
+            custom_gst_vehicle_type: q.custom_gst_vehicle_type
+        });
+        });
+    } 
+
 });
 
 
