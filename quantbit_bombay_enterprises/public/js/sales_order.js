@@ -19,7 +19,7 @@ frappe.ui.form.on("Sales Order", {
         'custom_transporter_', 'custom_gst_transporter_id', 'custom_transporter_name',
         'custom_driver', 'custom_driver_name', 'custom_transport_receipt_no',
         'custom_vehicle_no', 'custom_distance_in_km', 'custom_no_of_packaging',
-        'custom_mode_of_transport', 'custom_gst_vehicle_type'
+        'custom_mode_of_transport', 'custom_gst_vehicle_type','custom_remark'
         ]).then(({ message: q }) => {
         if (!q) return;
         frm.set_value({
@@ -33,7 +33,8 @@ frappe.ui.form.on("Sales Order", {
             custom_distance_in_km: q.custom_distance_in_km,
             custom_no_of_packages: q.custom_no_of_packaging,
             custom_mode__of_transport: q.custom_mode_of_transport,
-            custom_gst_vehicle_type: q.custom_gst_vehicle_type
+            custom_gst_vehicle_type: q.custom_gst_vehicle_type,
+            custom_remark : q.custom_remark
         });
         });
     } 
