@@ -22,20 +22,45 @@ frappe.ui.form.on("Sales Order", {
         'custom_mode_of_transport', 'custom_gst_vehicle_type','custom_remark'
         ]).then(({ message: q }) => {
         if (!q) return;
-        frm.set_value({
-            custom_transporter: q.custom_transporter_,
-            custom_gst_transporter_id: q.custom_gst_taransporters_id,
-            custom_transporter_name: q.custom_transporter_name,
-            custom_driver: q.custom_driver,
-            custom_driver_name: q.custom_driver_name,
-            custom_transport_receipt_no: q.custom_transport_receipt_no,
-            custom_vehicle_no: q.custom_vehicle_no,
-            custom_distance_in_km: q.custom_distance_in_km,
-            custom_no_of_packages: q.custom_no_of_packaging,
-            custom_mode__of_transport: q.custom_mode_of_transport,
-            custom_gst_vehicle_type: q.custom_gst_vehicle_type,
-            custom_remark : q.custom_remark
+            frm.set_value({
+                custom_transporter: q.custom_transporter_,
+                custom_gst_transporter_id: q.custom_gst_taransporters_id,
+                custom_transporter_name: q.custom_transporter_name,
+                custom_driver: q.custom_driver,
+                custom_driver_name: q.custom_driver_name,
+                custom_transport_receipt_no: q.custom_transport_receipt_no,
+                custom_vehicle_no: q.custom_vehicle_no,
+                custom_distance_in_km: q.custom_distance_in_km,
+                custom_no_of_packages: q.custom_no_of_packaging,
+                custom_mode__of_transport: q.custom_mode_of_transport,
+                custom_gst_vehicle_type: q.custom_gst_vehicle_type,
+                custom_remark : q.custom_remark
+            });
         });
+        // only for new Sales Orders whose sales team is still empty
+        if (!frm.is_new() || (frm.doc.sales_team || []).length) return;
+
+        // find the source Quotation from the item rows
+        const quotation = (frm.doc.items || [])
+            .map(row => row.prevdoc_docname)
+            .find(name => name);
+        if (!quotation) return;
+
+        frappe.db.get_value('Quotation', quotation, [
+            'custom_sales_person_name',
+            'custom_contact_no',
+            'custom_email_id'
+        ]).then(r => {
+            const q = r.message;
+            if (!q || !q.custom_sales_person_name) return;
+
+            const row = frm.add_child('sales_team');
+            row.sales_person = q.custom_sales_person_name;
+            row.contact_no = q.custom_contact_no;
+            row.custom_email_id = q.custom_email_id;
+            row.allocated_percentage = 100;
+
+            frm.refresh_field('sales_team');
         });
     } 
 
