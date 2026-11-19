@@ -19,6 +19,7 @@ def validate_filters(filters):
         frappe.throw(_("From Date cannot be after To Date"))
     if not filters.get("company"):
         frappe.throw(_("Company is mandatory"))
+    
 
 
 def get_columns():
@@ -44,7 +45,11 @@ def get_data(filters):
     conditions = ""
     if filters.get("bank_account"):
         # Payment Entry.bank_account = "Company Bank Account"
-        conditions += " AND pe.bank_account = %(bank_account)s"
+        conditions += " AND ba.bank = %(bank_account)s"
+    
+    if filters.get("customer_name"):
+        conditions += "AND pe.party = %(customer_name)s" 
+    
 
     rows = frappe.db.sql(
         f"""
