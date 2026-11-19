@@ -1,6 +1,6 @@
 {
  "actions": [],
- "creation": "2026-09-26 13:00:00.000000",
+ "creation": "2026-09-26 13:00:00",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -10,7 +10,8 @@
   "description",
   "uom",
   "quantity",
-  "inward_item"
+  "inward_item",
+  "part_number"
  ],
  "fields": [
   {
@@ -63,11 +64,17 @@
    "hidden": 1,
    "label": "Inward Item",
    "no_copy": 1
+  },
+  {
+   "fetch_from": "item.custom_part_number",
+   "fieldname": "part_number",
+   "fieldtype": "Data",
+   "label": "Part Number"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2026-09-26 13:00:00.000000",
+ "modified": "2026-11-19 11:48:45.946085",
  "modified_by": "Administrator",
  "module": "Quantbit Bombay Enterprises",
  "name": "Material Inward Item",

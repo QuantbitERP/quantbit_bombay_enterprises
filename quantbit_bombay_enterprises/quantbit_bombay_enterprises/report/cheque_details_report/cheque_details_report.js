@@ -26,19 +26,26 @@ frappe.query_reports["Cheque Details Report"] = {
 			reqd: 1,
 		},
 		{
+			fieldname: "customer_name",
+			label: __("Customer Name"),
+			fieldtype: "Link",
+			options: "Customer"
+		},
+
+		{
 			// the company bank account (is_company_account = 1) where cheques are deposited
 			fieldname: "bank_account",
-			label: __("Company Bank Account"),
+			label: __("Bank Name"),
 			fieldtype: "Link",
-			options: "Bank Account",
-			get_query: function () {
-				return {
-					filters: {
-						is_company_account: 1,
-						company: frappe.query_report.get_filter_value("company"),
-					},
-				};
-			},
+			options: "Bank",
+			// get_query: function () {
+			// 	return {
+			// 		filters: {
+			// 			is_company_account: 1,
+			// 			company: frappe.query_report.get_filter_value("company"),
+			// 		},
+			// 	};
+			// },
 		},
 		// {
 		// 	fieldname: "mode_of_payment",
