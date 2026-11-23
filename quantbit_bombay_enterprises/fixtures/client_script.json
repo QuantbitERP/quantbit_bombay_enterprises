@@ -9,5 +9,16 @@
   "name": "Set Warehouse Filter",
   "script": "frappe.ui.form.on(\"Sales Order\", {\n    company(frm) {\n        // Clear existing warehouse if company changes\n        frm.set_value(\"set_warehouse\", null);\n\n        set_warehouse_filter(frm);\n    },\n\n    setup(frm) {\n        set_warehouse_filter(frm);\n    }\n});\n\nfunction set_warehouse_filter(frm) {\n    frm.set_query(\"set_warehouse\", function() {\n        return {\n            filters: {\n                company: frm.doc.company\n            }\n        };\n    });\n}",
   "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Quotation",
+  "enabled": 1,
+  "modified": "2026-11-23 15:21:30.376761",
+  "module": "Quantbit Bombay Enterprises",
+  "name": "Filter Transporter in Quotation",
+  "script": "frappe.ui.form.on('Quotation', {\n    setup: function(frm) {\n\n        frm.set_query('custom_transporter_', function() {\n            return {\n                filters: {\n                    'is_transporter': 1\n                }\n            };\n        });\n\n    }\n});",
+  "view": "Form"
  }
 ]
