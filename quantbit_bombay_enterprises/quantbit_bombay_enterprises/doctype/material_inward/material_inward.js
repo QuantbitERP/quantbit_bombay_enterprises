@@ -28,6 +28,15 @@ frappe.ui.form.on("Material Inward", {
 
 	refresh: function(frm) {
 		calculate_total_quantity(frm);
+
+		if (!frm.is_new() && frm.doc.docstatus !== 2) {
+			frm.add_custom_button(__("Material Outward"), function() {
+				frappe.model.open_mapped_doc({
+					method: "quantbit_bombay_enterprises.quantbit_bombay_enterprises.doctype.material_inward.material_inward.make_material_outward",
+					frm: frm
+				});
+			});
+		}
 	},
 
 	party_type: function(frm) {

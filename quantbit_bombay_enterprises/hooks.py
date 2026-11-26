@@ -199,7 +199,8 @@ doctype_js = {
 # along with any modifications made in other Frappe apps
 override_doctype_dashboards = {
 	"Issue": "quantbit_bombay_enterprises.public.python.issue.get_dashboard_data",
-	"Sales Invoice": "quantbit_bombay_enterprises.public.python.sales_invoice.get_dashboard_data"
+	"Sales Invoice": "quantbit_bombay_enterprises.public.python.sales_invoice.get_dashboard_data",
+	"Sales Order": "quantbit_bombay_enterprises.public.python.sales_order.get_dashboard_data"
 }
 
 # exempt linked doctypes from being automatically cancelled
