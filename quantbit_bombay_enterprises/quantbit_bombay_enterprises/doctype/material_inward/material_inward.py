@@ -4,6 +4,7 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
+from frappe.model.mapper import get_mapped_doc
 from frappe.utils import flt
 
 
@@ -83,3 +84,53 @@ class MaterialInward(Document):
 			total_qty += flt(row.quantity)
 
 		self.total_quantity = total_qty
+
+
+@frappe.whitelist()
+def make_material_outward(source_name, target_doc=None):
+	"""Map a Material Inward document and its items into a new Material Outward document."""
+	def set_missing_values(source, target):
+		target.against_document = source.name
+		target.posting_date = frappe.utils.today()
+		if not target.remarks:
+			target.remarks = source.remarks
+
+		total_qty = 0.0
+		for item in target.items:
+			total_qty += flt(item.quantity)
+		target.total_quantity = total_qty
+
+	return get_mapped_doc(
+		"Material Inward",
+		source_name,
+		{
+			"Material Inward": {
+				"doctype": "Material Outward",
+				"field_map": {
+					"name": "against_document",
+					"company": "company",
+					"party_type": "party_type",
+					"customer": "customer",
+					"customer_name": "customer_name",
+					"supplier": "supplier",
+					"supplier_name": "supplier_name",
+					"party_receipt_no": "party_receipt_no",
+					"remarks": "remarks",
+				},
+			},
+			"Material Inward Item": {
+				"doctype": "Material Inward Item",
+				"field_map": {
+					"item": "item",
+					"item_name": "item_name",
+					"description": "description",
+					"uom": "uom",
+					"quantity": "quantity",
+					"part_number": "part_number",
+					"name": "inward_item",
+				},
+			},
+		},
+		target_doc,
+		set_missing_values,
+	)

@@ -3,6 +3,21 @@ const STOCK_METHOD =
 
 
 frappe.ui.form.on("Sales Order", {
+    refresh(frm) {
+        if (!frm.is_new() && frm.doc.docstatus !== 2 && frm.doc.status !== "Completed") {
+            frm.add_custom_button(
+                __("Material Inward"),
+                function () {
+                    frappe.model.open_mapped_doc({
+                        method: "quantbit_bombay_enterprises.public.python.sales_order.make_material_inward",
+                        frm: frm,
+                    });
+                },
+                __("Create")
+            );
+        }
+    },
+
     transaction_date(frm) {
         refresh_open_row_preview(frm);
     },
@@ -13,36 +28,38 @@ frappe.ui.form.on("Sales Order", {
     onload(frm) {
         if (!frm.is_new()) return;
         const row = (frm.doc.items || []).find(r => r.prevdoc_docname);
-        if (!row || frm.doc.custom_transporter) return;
 
-        frappe.db.get_value('Quotation', row.prevdoc_docname, [
-        'custom_transporter_', 'custom_gst_transporter_id', 'custom_transporter_name',
-        'custom_driver', 'custom_driver_name', 'custom_transport_receipt_no',
-        'custom_vehicle_no', 'custom_distance_in_km', 'custom_no_of_packaging',
-        'custom_mode_of_transport', 'custom_gst_vehicle_type','custom_remark'
-        ]).then(({ message: q }) => {
-        if (!q) return;
-            frm.set_value({
-                custom_transporter: q.custom_transporter_,
-                custom_gst_transporter_id: q.custom_gst_taransporters_id,
-                custom_transporter_name: q.custom_transporter_name,
-                custom_driver: q.custom_driver,
-                custom_driver_name: q.custom_driver_name,
-                custom_transport_receipt_no: q.custom_transport_receipt_no,
-                custom_vehicle_no: q.custom_vehicle_no,
-                custom_distance_in_km: q.custom_distance_in_km,
-                custom_no_of_packages: q.custom_no_of_packaging,
-                custom_mode__of_transport: q.custom_mode_of_transport,
-                custom_gst_vehicle_type: q.custom_gst_vehicle_type,
-                custom_remark : q.custom_remark
+        if (row && !frm.doc.custom_transporter) {
+            frappe.db.get_value('Quotation', row.prevdoc_docname, [
+                'custom_transporter_', 'custom_gst_transporter_id', 'custom_transporter_name',
+                'custom_driver', 'custom_driver_name', 'custom_transport_receipt_no',
+                'custom_vehicle_no', 'custom_distance_in_km', 'custom_no_of_packaging',
+                'custom_mode_of_transport', 'custom_gst_vehicle_type', 'custom_remark'
+            ]).then(({ message: q }) => {
+                if (!q) return;
+                frm.set_value({
+                    custom_transporter: q.custom_transporter_,
+                    custom_gst_transporter_id: q.custom_gst_transporter_id,
+                    custom_transporter_name: q.custom_transporter_name,
+                    custom_driver: q.custom_driver,
+                    custom_driver_name: q.custom_driver_name,
+                    custom_transport_receipt_no: q.custom_transport_receipt_no,
+                    custom_vehicle_no: q.custom_vehicle_no,
+                    custom_distance_in_km: q.custom_distance_in_km,
+                    custom_no_of_packages: q.custom_no_of_packaging,
+                    custom_mode__of_transport: q.custom_mode_of_transport,
+                    custom_gst_vehicle_type: q.custom_gst_vehicle_type,
+                    custom_remark: q.custom_remark
+                });
             });
-        });
+        }
+
         // only for new Sales Orders whose sales team is still empty
-        if (!frm.is_new() || (frm.doc.sales_team || []).length) return;
+        if ((frm.doc.sales_team || []).length) return;
 
         // find the source Quotation from the item rows
         const quotation = (frm.doc.items || [])
-            .map(row => row.prevdoc_docname)
+            .map(r => r.prevdoc_docname)
             .find(name => name);
         if (!quotation) return;
 
